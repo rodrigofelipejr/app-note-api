@@ -15,7 +15,6 @@ userSchema.pre('save', function (next) {
       (err, hashedPassword) => {
         if (err) {
           next(err)
-          console.log('asssssssssssssssssssssss')
         } else {
           this.password = hashedPassword
           next()
