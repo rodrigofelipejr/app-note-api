@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 
-mongoose.connect('mongodb://localhost/javascriptNote', {
+mongoose.connect('mongodb://localhost/app-note', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true

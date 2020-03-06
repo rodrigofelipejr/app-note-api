@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
-const bcryt = require('bcrypt')
+const bcrypt = require('bcrypt')
 
-let userSchema = new mogoose.Schema({
-  name: String,
+let userSchema = new mongoose.Schema({
+  name: { type: String, require: true },
   email: { type: String, require: true, unique: true },
   password: { type: String, require: true },
   created_at: { type: Date, default: Date.now },
@@ -11,12 +11,14 @@ let userSchema = new mogoose.Schema({
 
 userSchema.pre('save', function (next) {
   if (this.isNew || this.isModified('password')) {
-    bcryt.hash(this.password, 20,
+    bcrypt.hash(this.password, 10,
       (err, hashedPassword) => {
         if (err) {
           next(err)
+          console.log('asssssssssssssssssssssss')
         } else {
           this.password = hashedPassword
+          next()
         }
       })
   }
