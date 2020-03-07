@@ -1,15 +1,19 @@
 const express = require('express')
 const path = require('path')
-const logger = require('morgan');
+const logger = require('morgan')
+const cors = require('cors')
 
-const indexRouter = require('./app/routes/index');
+require('./config/database')
 
-const app = express();
+const indexRouter = require('./app/routes/index')
+
+const app = express()
 
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(cors())
 
 app.use('/', indexRouter)
 
