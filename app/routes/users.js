@@ -6,6 +6,7 @@ require('dotenv').config()
 const secret = process.env.JWT_TOKEN
 
 const User = require('../models/user')
+const withAuth = require('../middlewares/auth')
 
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body
@@ -31,7 +32,7 @@ router.post('/login', async (req, res) => {
         if (!same)
           res.status(401).json({ error: 'E-mail ou senha invalidos' })
         else {
-          user.password = undefined;
+          user.password = undefined
           const token = jwt.sign({ email }, secret, { expiresIn: '1d' })
           res.status(200).json({ user: user, token: token })
         }
@@ -39,6 +40,44 @@ router.post('/login', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: 'Erro interno, por favor tente novamente' })
+  }
+})
+
+router.put('/password', withAuth, async (req, res) => {
+  const { password } = req.body
+
+  try {
+    let user = await User.findOne({ _id: req.user._id })
+    user.password = password
+    user.save()
+    res.json(user)
+  } catch (error) {
+    res.status(401).json({ error: 'Error ao atualizar senha', message: { error } })
+  }
+})
+
+router.put('/', withAuth, async (req, res) => {
+  const { name, email } = req.body
+
+  try {
+    let user = await User.findByIdAndUpdate(
+      { _id: req.user._id },
+      { $set: { name, email } },
+      { upsert: true, 'new': true }
+    )
+    res.json(user)
+  } catch (error) {
+    res.status(401).json({ error: 'Error ao atualizar usuário', message: { error } })
+  }
+})
+
+router.delete('/', withAuth, async (req, res) => {
+  try {
+    let user = await User.findOne({ _id: req.user._id })
+    await user.delete()
+    res.json({ message: 'OK' }).status(201)
+  } catch (error) {
+    res.status(500).json({ error: error })
   }
 })
 
