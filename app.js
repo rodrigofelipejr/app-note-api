@@ -3,6 +3,7 @@ const path = require('path')
 const logger = require('morgan')
 const cors = require('cors')
 
+/* database */
 require('./config/database')
 
 const indexRouter = require('./app/routes/index')
